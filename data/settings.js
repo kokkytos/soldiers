@@ -12,7 +12,7 @@ var period={
     points: "Points:" ,
 
 // birth fields
-	 aa: "aa" , 
+	 aa: "ID" , 
 	 NOM_et_P_1:"NOM et Prénoms",
 	 NOM_et_Pr: "NOM_et_Pr" , 
 	 Fiches_du: "NOM et Prénoms" , 
@@ -33,7 +33,7 @@ var period={
 	 Descriptio: "Description du décès" , 
 	 Descript_1: "Descript_1" , 
 	 Lieu_du__1: "Lieu du décès" , 
-         Lieu_du__2:  "Lieu_du__2",
+         Lieu_du__2:  "Lieu du deces suite",
 	 death_pl_1: "death_pl_1" , 
 	 death_pl_2: "death_pl_2" , 
 	 Lieu_du_de: "Lieu_du_de" , 
