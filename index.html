@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css?family=Bowlby+One" rel="stylesheet">
+    <link rel="stylesheet" href="leaflet/leaflet.css" />
+
+
+    <link rel="stylesheet" href="Leaflet.EasyButton/src/easy-button.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+
+    <script src="leaflet/leaflet.js"></script>
+
+    <link href="style.css" rel="stylesheet" type="text/css">
+
+
+    <script src="Leaflet.EasyButton/src/easy-button.js"></script>
+
+    <link rel="stylesheet" href="MarkerCluster/MarkerCluster.css" />
+    <link rel="stylesheet" href="MarkerCluster/MarkerCluster.Default.css" />
+    <script src="MarkerCluster/leaflet.markercluster.js"></script>
+
+    <link rel="stylesheet" href="noUiSlider/nouislider.min.css" />
+    <script src="data/settings.js"></script>
+    <script src="noUiSlider/nouislider.min.js"></script>
+
+ 	<script src="leaflet-color-markers/js/leaflet-color-markers.js"></script>
+
+    <script src="wNumb/wNumb.js"></script>
+
+
+    <script src="data/birth_recruit.js"></script>
+    <script src="data/thanatos.js"></script>
+    <script src="data/recruitment.js"></script>
+    <script src="data/recruit_death.js"></script>
+
+
+
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.16/af-2.2.2/b-1.5.1/b-colvis-1.5.1/b-html5-1.5.1/cr-1.4.1/fc-3.2.4/fh-3.1.3/kt-2.3.2/r-2.2.1/rg-1.0.2/rr-1.2.3/sc-1.4.4/sl-1.2.5/datatables.min.css" />
+
+    <script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.16/af-2.2.2/b-1.5.1/b-colvis-1.5.1/b-html5-1.5.1/cr-1.4.1/fc-3.2.4/fh-3.1.3/kt-2.3.2/r-2.2.1/rg-1.0.2/rr-1.2.3/sc-1.4.4/sl-1.2.5/datatables.min.js"></script>
+
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/1.5.1/css/buttons.dataTables.min.css" />
+
+    <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.1/js/dataTables.buttons.min.js"></script>
+
+
+    <script src="dataobj.js"></script>
+    
+
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            background-color: #dddddd;
+	    font-size: 12px;
+	    font-family: Arial, Helvetica, sans-serif;
+        }
+table.dataTable tbody th, table.dataTable tbody td{padding: 2px 1px;}
+table.dataTable thead th, table.dataTable thead td{padding: 5px 5px;}
+.dataTables_wrapper {
+    position: relative;
+    clear: both;
+    zoom: 1;
+padding: 10px 10px;
+}
+
+        html,
+        body,
+        #map {
+            height: 100%;
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <script>
+
+
+        $(document).ready(function() {
+            var events = $('#events');
+            var table = $('#example').DataTable({
+                // δες για geojson εδώ:https://datatables.net/forums/discussion/40910/parsing-geojson-in-datatables
+                //ajax: {
+                //	url:'data.geojson',
+                //	dataSrc: 'features'
+                //  },
+ 
+                data: recruitment_pois.features, //δες για Javascript object εδώ https://datatables.net/examples/data_sources/js_array.html
+                "columns": [
+                    //sos για να εμφανιστούν οι στήλες αυτές πρέπει να υπάρχουν στο αρχείο json ή στο data object
+                    //{ "data": "properties.id" }, //uncomment to show in datatables, check also to <th> tag of table 
+        {"data": "properties.aa"},
+	//{"data": "properties.NOM_et_Pr"},
+	{"data": "properties.NOM_et_P_1"},
+	{"data": "properties.Numero_de"},
+	{"data": "properties.Grade"},
+	{"data": "properties.Unité"},
+	{"data": "properties.Bureau_de"},
+	{"data": "properties.Date_de__1"},
+	{"data": "properties.Lieu_Nai_1"},
+	{"data": "properties.Bureau_d_1"},
+	{"data": "properties.Date_de_D"},
+	{"data": "properties.Age"},
+	{"data": "properties.Cause_de_D"},
+	{"data": "properties.Descriptio"},
+	//{"data": "properties.Descript_1"},
+	{"data": "properties.Lieu_du__1"},
+	//{"data": "properties.Lieu_du_de"},
+	{"data": "properties.Départeme"},
+	{"data": "properties.burial_pla"},
+	//{"data": "properties.Comments"},
+	//{"data": "properties.F27"},
+	//{"data": "properties.F28"},
+
+                ],
+	 	"scrollY":        "200px",
+		"scrollCollapse": true,
+		"paging":         true,//set to false to enable scrollbars
+		select: true, 
+		language: {
+                    "url": "https://cdn.datatables.net/plug-ins/1.10.16/i18n/Greek.json"
+                },
+                fnInitComplete: function() {
+                    $("#example_wrapper").hide();//hide the datatables wrapper
+                }, 
+	dom: 'Bfrtip',
+     	buttons: [
+		{
+		    text: 'Clear selection',
+		    action: function ( e, dt, node, config ) {
+			dt. rows().deselect()
+		        cluster_popplaces.clearLayers();
+		            //cluster_recruitment.clearLayers();
+		            //cluster_thanatos.clearLayers();
+
+		            //and repopulate it
+		            popplaces = new L.geoJson(greeks_pois, {
+		                //onEachFeature: pop_popplaces,
+		                //pointToLayer: popplaces_marker
+		            })
+		            //console.log(map.getBounds().getEast());
+		            //and back again into the cluster group
+		            cluster_popplaces.addLayer(popplaces);
+
+
+
+		            cluster_recruitment.clearLayers();
+			    recruitment = new L.geoJson(recruitment_pois, {
+				    //onEachFeature: pop_popplaces,
+				    pointToLayer: recruit_marker
+			   })
+  			 cluster_recruitment.addLayer(recruitment);
+
+
+		            cluster_thanatos.clearLayers();
+			   thanatos = new L.geoJson(thanatos_pois, {
+				    //onEachFeature: pop_popplaces,
+				    pointToLayer: death_marker
+				});
+  			 cluster_thanatos.addLayer(thanatos);
+
+			 
+
+
+
+		    }
+		}
+	    ],
+            });
+
+
+            table
+                .on('select', function(e, dt, type, indexes) { //event όταν επιλέγο μια γραμμή στον πίνακα
+
+
+                    //var rowData = table.rows(indexes).data().toArray();
+		    var rowData = table.rows( { selected: true } ).data().toArray();
+	            //console.log(indexes);
+ 		    //console.log(table.rows( { selected: true } ).data().toArray());
+
+                    //console.log(rowData[0].properties.id);
+
+                    //first let's clear the layers:
+                    cluster_popplaces.clearLayers();
+                    cluster_recruitment.clearLayers();
+                    //cluster_birthrecruit.clearLayers();
+                    cluster_thanatos.clearLayers();
+
+                    //and repopulate it
+                    popplaces = new L.geoJson(greeks_pois, {
+                        //onEachFeature: pop_popplaces,
+                        filter: function(feature, layer) {
+
+				
+
+					for (var i = 0; i < rowData.length; i += 1) {
+                                                console.log(rowData[i].properties.aa)
+ 						if (feature.properties.aa === rowData[i].properties.aa) return true
+
+					
+					  }
+
+
+								    
+						}//,pointToLayer: popplaces_marker
+					    })
+					    //console.log(map.getBounds().getEast());
+					    
+					    //and back again into the cluster group
+					    cluster_popplaces.addLayer(popplaces);
+
+
+
+					
+
+		        //and repopulate it
+                    recruitment = new L.geoJson(recruitment_pois, {
+                        //onEachFeature: pop_popplaces,
+                        filter: function(feature, layer) {			
+					for (var i = 0; i < rowData.length; i += 1) {
+                                                console.log(rowData[i].properties.aa)
+ 						if (feature.properties.aa === rowData[i].properties.aa) return true
+						 }
+						},
+						pointToLayer: recruit_marker
+					    })
+					    //console.log(map.getBounds().getEast());
+					    
+					    //and back again into the cluster group
+					    cluster_recruitment.addLayer(recruitment);
+
+
+		        //and repopulate it
+                    thanatos = new L.geoJson(thanatos_pois, {
+                        //onEachFeature: pop_popplaces,
+                        filter: function(feature, layer) {			
+					for (var i = 0; i < rowData.length; i += 1) {
+                                                console.log(rowData[i].properties.aa)
+ 						if (feature.properties.aa === rowData[i].properties.aa) return true
+						 }
+						},
+						pointToLayer: death_marker
+					    })
+					    //console.log(map.getBounds().getEast());
+					    
+					    //and back again into the cluster group
+					    cluster_thanatos.addLayer(thanatos);
+
+
+
+
+      //and repopulate it
+	//            controler.removeLayer(birthrecruit)
+             //       birthrecruit = new L.geoJson(birthrecruit_pois, {
+                        //onEachFeature: pop_popplaces,
+                //        filter: function(feature, layer) {			
+		//			for (var i = 0; i < rowData.length; i += 1) {
+                   //                             console.log(rowData[i].properties.aa)
+ 		//				if (feature.properties.aa === rowData[i].properties.aa) return true
+		//				 }
+		//				},
+		//				color: 'green', weight:1
+		//			    })
+
+ 		//			    controler.addOverlay(birthrecruit, "birth_recruit_f");
+
+
+
+
+})
+
+                .on('deselect', function(e, dt, type, indexes) {
+                    var rowData = table.rows(indexes).data().toArray();
+                    console.log(JSON.stringify(rowData));
+
+ 		    //first let's clear the layers:
+                    cluster_popplaces.clearLayers();
+                    //cluster_recruitment.clearLayers();
+                    //cluster_birthrecruit.clearLayers();
+                    //cluster_thanatos.clearLayers();
+
+                    //and repopulate it
+                    popplaces = new L.geoJson(greeks_pois, {
+                        //onEachFeature: pop_popplaces,
+                        pointToLayer: popplaces_marker
+                    })
+                    //console.log(map.getBounds().getEast());
+                    //and back again into the cluster group
+                    //cluster_popplaces.addLayer(popplaces);
+                });
+
+        });
+    </script>
+
+    <table id="example" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <!-- th>ID</th -->
+		<th>aa</th>
+		 <!--<th>NOM_et_Pr</th>-->
+		<th>NOM et Prénoms</th>
+		<th>Νumero de tombe</th>
+		<th>Grade</th>
+		<th>Unité</th>
+		<th>Bureau de recrutement</th>
+		<th>Date de Naissance</th>
+		<th>Lieu de Naissance</th>
+		<th>Département de Naissance</th>
+		<th>Date de Décès</th>
+		<th>Age</th>
+		<th>Cause de Déces</th>
+		<th>Description du décè</th>
+		<!--<th>Descript_1</th>-->
+		<th>Lieu du décès</th>
+		<!--<th>Lieu_du_de</th>-->
+		<th>Département de transcription du décès </th>
+		<th>Pays de transcription du décès</th>
+		<!--<th>Comments</th>-->
+		<!--<th>F27</th>-->
+		<!--<th>F28</th>-->
+            </tr>
+        </thead>
+    </table>
+
+    <div id="map"></div>
+    <!-- <div id="map" style="position: relative; top: 85px;"></div> -->
+
+
+
+
+    <script>
+
+
+
+        var mbAttr = 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
+            '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+            'Imagery © <a href="http://mapbox.com">Mapbox</a>',
+            mbUrl = 'https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw';
+
+        var grayscale = L.tileLayer(mbUrl, {
+                id: 'mapbox.light',
+                attribution: mbAttr
+            }),
+            streets = L.tileLayer(mbUrl, {
+                id: 'mapbox.streets',
+                attribution: mbAttr
+            });
+
+
+
+        // ************* base map **********************************************************************
+        var map = L.map('map', {
+            zoomControl: true,
+            maxZoom: 18,
+            layers: [streets]
+        });
+
+        var basemap_0 = L.tileLayer('http://{s}.www.toolserver.org/tiles/bw-mapnik/{z}/{x}/{y}.png');
+
+
+
+        var basemap_1 = L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        })
+
+
+        // ***** layers marker ************************************************************************* 
+
+
+        function popplaces_marker(feature, latlng) {
+            return L.circleMarker(latlng, {
+                radius: 4.0,
+                fillColor: '#ff0000',
+                color: '#000066',
+                weight: 1,
+                opacity: 1.0,
+                fillOpacity: 0.8
+            })
+        }
+
+
+        function recruit_marker(feature, latlng) {
+		    return  L.marker(latlng, {icon: greenIcon});
+        }
+
+
+        function death_marker(feature, latlng) {
+
+	    return  L.marker(latlng, {icon: blackIcon});
+        }
+
+
+
+        // ******************* geoJson layers ********************************************************************
+
+        //  ********************** Τόπος γέννησης ********************************
+        var popplaces = new L.geoJson(greeks_pois, {
+            //onEachFeature: pop_popplaces,
+            //pointToLayer: popplaces_marker
+        });
+
+
+ function popup_lines(feature, layer) {
+    layer.bindPopup(
+	"<b>" + labels.aa + "</b>: " +feature.properties.aa + "<br>" +  
+     //labels.NOM_et_Pr + ": " +feature.properties.NOM_et_Pr + "<br>" +  
+     "<b>" +labels.Fiches_du + "</b>: " +feature.properties.Fiches_du + "<br>" +  
+     "<b>" +labels.Numero_de + "</b>: " +feature.properties.Numero_de + "<br>" +  
+     "<b>" +labels.Grade + "</b>: " +feature.properties.Grade + "<br>" +  
+     "<b>" +labels.Unité + "</b>: " +feature.properties.Unité + "<br>" +  
+     "<b>" +labels.Bureau_de + "</b>: " +feature.properties.Bureau_de + "<br>" +  
+    "<b>" + labels.Date_de__1 + "</b>: " +feature.properties.Date_de__1 + "<br>" +  
+     "<b>" +labels.Lieu_Nai_1 + "</b>: " +feature.properties.Lieu_Nai_1 + "<br>" +  
+     "<b>" +labels.Bureau_d_1 + "</b>: " +feature.properties.Bureau_d_1 + "<br>" +  
+     "<b>" +labels.Date_de_D + "</b>: " +feature.properties.Date_de_D + "<br>" +  
+     "<b>" +labels.Age + "</b>: " +feature.properties.Age + "<br>" +  
+     "<b>" +labels.Cause_de_D + "</b>: " +feature.properties.Cause_de_D + "<br>" +  
+     "<b>" +labels.Descriptio + "</b>: " +feature.properties.Descriptio + "<br>" +  
+     //labels.Descript_1 + ": " +feature.properties.Descript_1 + "<br>" +  
+     "<b>" +labels.Lieu_du__1 + "</b>: " +feature.properties.Lieu_du__1 + "<br>" +  
+     //labels.Lieu_du_de + ": " +feature.properties.Lieu_du_de + "<br>" +  
+     "<b>" +labels.Départeme + "</b>: " +feature.properties.Départeme + "<br>" +  
+     "<b>" +labels.burial_pla + "</b>: " +feature.properties.burial_pla + "<br>" 
+     //labels.Comments + ": " +feature.properties.Comments + "<br>" 
+	
+);
+  };
+
+
+	//  ********************** Τόπος κατάταξης ********************************
+        var birthrecruit = new L.geoJson(birthrecruit_pois,
+		{onEachFeature: popup_lines, 
+		color: 'green', 
+		weight:1}
+		);
+
+        //  ********************** recruitment_pois********************************
+        var recruitment = new L.geoJson(recruitment_pois, {
+            //onEachFeature: pop_popplaces,
+            pointToLayer: recruit_marker
+        });
+
+        //  ********************** recruit_death********************************
+        var recruitdeath = new L.geoJson(recruitdeath_pois,
+				 {onEachFeature: popup_lines, 
+				 color: 'red',
+				 weight:1}		
+		);
+		
+        //  ********************** Τόπος θανάτου ********************************
+        var thanatos = new L.geoJson(thanatos_pois, {
+            //onEachFeature: pop_popplaces,
+            pointToLayer: death_marker
+        });
+	
+	//fit map to layers bounds
+	map.fitBounds(L.featureGroup([popplaces,birthrecruit,recruitment,thanatos,recruitdeath]).getBounds());
+
+
+
+	// ******************* MarkerClusterGroups ********************************************************************
+        var cluster_popplaces = new L.MarkerClusterGroup({
+            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            showCoverageOnHover: true,
+            maxClusterRadius: 20,
+            //disableClusteringAtZoom:18, 
+            chunkedLoading: true,
+            chunkInterval: 500
+        });
+        cluster_popplaces.addLayer(popplaces);
+        cluster_popplaces.addTo(map);
+        //map.fitBounds(cluster_popplaces.getBounds());
+
+
+
+        var cluster_recruitment = new L.MarkerClusterGroup({
+            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            showCoverageOnHover: true,
+            maxClusterRadius: 20,
+            //disableClusteringAtZoom:18, 
+            chunkedLoading: true,
+            chunkInterval: 500
+        });
+        cluster_recruitment.addLayer(recruitment);
+        //cluster_recruitment.addTo(map);
+        //map.fitBounds(cluster_recruitment.getBounds());
+
+
+
+        var cluster_thanatos = new L.MarkerClusterGroup({
+            spiderfyDistanceMultiplier: 2, //see discussion https://github.com/Leaflet/Leaflet.markercluster/issues/431
+            showCoverageOnHover: true,
+            maxClusterRadius: 20,
+            //disableClusteringAtZoom:18, 
+            chunkedLoading: true,
+            chunkInterval: 500
+        });
+        cluster_thanatos.addLayer(thanatos);
+        //cluster_thanatos.addTo(map);
+        //map.fitBounds(cluster_recruitment.getBounds());
+
+        
+		
+
+
+	// **** control.layers settings *******************************************************
+
+        var baseLayers = {
+            "Grayscale": grayscale,
+            "Streets": streets
+        };
+
+
+        var baseMaps = {
+            'OSM Black & White': basemap_0,
+            'OSM': basemap_1
+        };
+
+        controler = L.control.layers(baseLayers, {
+        "<img src='leaflet-color-markers/img/marker-icon-2x-blue.png' height=24>Lieu de Naissance": cluster_popplaces,
+	    "<img src='leaflet-color-markers/img/marker-icon-2x-green.png' height=24>Bureau de recrutement": cluster_recruitment,
+        "<img src='leaflet-color-markers/img/marker-icon-2x-black.png' height=24>Lieu du décès": cluster_thanatos,
+        "Lieu de Naissance-Bureau de recrutement": birthrecruit,
+	    "Bureau de recrutement-Lieu du décès":recruitdeath, 
+
+        }, {
+            collapsed: false
+        }).addTo(map);
+
+
+
+
+
+
+
+	// *************** cluster click events *******************************************************
+
+        cluster_popplaces.on('click', function(e) { //check also 'mouseover' event
+            //open popup;
+            var popup = L.popup()
+                .setLatLng(e.latlng)
+                .setContent( labels.aa + ": " + e.layer.feature.properties.aa + "<br>" +  
+     labels.NOM_et_P_1 + ": " + e.layer.feature.properties.NOM_et_P_1 + "<br>" +  
+     labels.Numero_de + ": " + e.layer.feature.properties.Numero_de + "<br>" +  
+     labels.Grade + ": " + e.layer.feature.properties.Grade + "<br>" +  
+     labels.Unité + ": " + e.layer.feature.properties.Unité + "<br>" +  
+     labels.Bureau_de + ": " + e.layer.feature.properties.Bureau_de + "<br>" +  
+     labels.Date_de__1 + ": " + e.layer.feature.properties.Date_de__1 + "<br>" +  
+     labels.Lieu_Nai_1 + ": " + e.layer.feature.properties.Lieu_Nai_1 + "<br>" +  
+     labels.Bureau_d_1 + ": " + e.layer.feature.properties.Bureau_d_1 + "<br>" +  
+     labels.Date_de_D + ": " + e.layer.feature.properties.Date_de_D + "<br>" +  
+     labels.Age + ": " + e.layer.feature.properties.Age + "<br>" +  
+     labels.Cause_de_D + ": " + e.layer.feature.properties.Cause_de_D + "<br>" +  
+     labels.Descriptio + ": " + e.layer.feature.properties.Descriptio + "<br>" +  
+     labels.Lieu_du__1 + ": " + e.layer.feature.properties.Lieu_du__1 + "<br>" +  
+     labels.Lieu_du__2 + ": " + e.layer.feature.properties.Lieu_du__2 + "<br>" + 
+     labels.Départeme + ": " + e.layer.feature.properties.Départeme + "<br>" +  
+     labels.burial_pla + ": " + e.layer.feature.properties.burial_pla + "<br>" 
+
+                )
+                .openOn(map);
+        });
+
+
+        cluster_recruitment.on('click', function(e) { //check also 'mouseover' event
+            //open popup;
+            var popup = L.popup()
+                .setLatLng(e.latlng)
+                .setContent(    
+
+     labels.aa + ": " + e.layer.feature.properties.aa + "<br>" +  
+     labels.NOM_et_P_1 + ": " + e.layer.feature.properties.NOM_et_P_1 + "<br>" +  
+     labels.Numero_de + ": " + e.layer.feature.properties.Numero_de + "<br>" +  
+     labels.Grade + ": " + e.layer.feature.properties.Grade + "<br>" +  
+     labels.Unité + ": " + e.layer.feature.properties.Unité + "<br>" +  
+     labels.Bureau_de + ": " + e.layer.feature.properties.Bureau_de + "<br>" +  
+     labels.Date_de__1 + ": " + e.layer.feature.properties.Date_de__1 + "<br>" +  
+     labels.Lieu_Nai_1 + ": " + e.layer.feature.properties.Lieu_Nai_1 + "<br>" +  
+     labels.Bureau_d_1 + ": " + e.layer.feature.properties.Bureau_d_1 + "<br>" +  
+     labels.Date_de_D + ": " + e.layer.feature.properties.Date_de_D + "<br>" +  
+     labels.Age + ": " + e.layer.feature.properties.Age + "<br>" +  
+     labels.Cause_de_D + ": " + e.layer.feature.properties.Cause_de_D + "<br>" +  
+     labels.Descriptio + ": " + e.layer.feature.properties.Descriptio + "<br>" +  
+     labels.Lieu_du__1 + ": " + e.layer.feature.properties.Lieu_du__1 + "<br>" +  
+     labels.Lieu_du__2 + ": " + e.layer.feature.properties.Lieu_du__2 + "<br>" +  
+     labels.Départeme + ": " + e.layer.feature.properties.Départeme + "<br>" +  
+     labels.burial_pla + ": " + e.layer.feature.properties.burial_pla + "<br>" 
+                )
+                .openOn(map);
+        });
+
+ cluster_thanatos.on('click', function(e) { //check also 'mouseover' event
+            //open popup;
+            var popup = L.popup()
+                .setLatLng(e.latlng)
+                .setContent(    labels.aa + ": " + e.layer.feature.properties.aa + "<br>" +  
+     labels.NOM_et_P_1 + ": " + e.layer.feature.properties.NOM_et_P_1 + "<br>" +  
+     labels.Numero_de + ": " + e.layer.feature.properties.Numero_de + "<br>" +  
+     labels.Grade + ": " + e.layer.feature.properties.Grade + "<br>" +  
+     labels.Unité + ": " + e.layer.feature.properties.Unité + "<br>" +  
+     labels.Bureau_de + ": " + e.layer.feature.properties.Bureau_de + "<br>" +  
+     labels.Date_de__1 + ": " + e.layer.feature.properties.Date_de__1 + "<br>" +  
+     labels.Lieu_Nai_1 + ": " + e.layer.feature.properties.Lieu_Nai_1 + "<br>" +  
+     labels.Bureau_d_1 + ": " + e.layer.feature.properties.Bureau_d_1 + "<br>" +  
+     labels.Date_de_D + ": " + e.layer.feature.properties.Date_de_D + "<br>" +  
+     labels.Age + ": " + e.layer.feature.properties.Age + "<br>" +  
+     labels.Cause_de_D + ": " + e.layer.feature.properties.Cause_de_D + "<br>" +  
+     labels.Descriptio + ": " + e.layer.feature.properties.Descriptio + "<br>" +  
+     labels.Lieu_du__1 + ": " + e.layer.feature.properties.Lieu_du__1 + "<br>" +  
+     labels.Lieu_du__2 + ": " + e.layer.feature.properties.Lieu_du__2 + "<br>" +  
+     labels.Départeme + ": " + e.layer.feature.properties.Départeme + "<br>" +  
+     labels.burial_pla + ": " + e.layer.feature.properties.burial_pla + "<br>" 
+                )
+                .openOn(map);
+        });
+
+
+
+	// *********** Leaflet 
+	
+	// ********** Zoom to home ****************************
+
+	L.easyButton('fa-home',function(btn,map){
+	map.fitBounds(L.featureGroup([popplaces,birthrecruit,recruitment,thanatos,recruitdeath]).getBounds());
+	},'Zoom To Home').addTo(map);
+
+
+	// ********** button to show/hide data table **********
+        var pause = true;
+
+        function tooglebuttonstate() {
+            if (pause == false) {
+                pause = true;
+            } else {
+                pause = false;
+            };
+        };
+
+        function timeout(i, clickme) {
+
+            if (clickme == true) {
+                tooglebuttonstate();
+            };
+
+            if (pause == true) {
+                $("#example_wrapper").hide();
+                return;
+            };
+            if (pause == false) {
+
+                $("#example_wrapper").show();
+                $('html, body').animate({
+                    scrollTop: $("#example_wrapper").offset().top
+                }, 2000);
+
+
+
+            };
+        }
+
+
+
+        var toggle = L.easyButton({
+            states: [{
+                    stateName: 'play',
+                    icon: '<img src="filter-and-sort-arrows.svg" style="width:16px">',
+                    title: 'Filter data',
+                    onClick: function(control) {
+                        timeout(0, true);
+                        control.state('pause');
+                    }
+                }, {
+                    icon: '<img src="filter-and-sort-arrows.svg" style="width:16px">',
+                    stateName: 'pause',
+                    onClick: function(control) {
+                        timeout(0, true);
+                        control.state('replay');
+                    },
+                    title: 'Filter data'
+                },
+
+            ]
+        });
+
+        toggle.addTo(map);
+
+
+
+
+
+
+    </script>
+
+
+</body>
+
+</html>
