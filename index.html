@@ -103,6 +103,9 @@
 
 <body>
 
+<h1 align="left">   <IMG SRC="logo.png" ALT="logo">   </h1>
+
+
     <script>
         $(document).ready(function() {
             var events = $('#events');
@@ -834,6 +837,16 @@
             map.fitBounds(L.featureGroup([popplaces, birthrecruit, recruitment, thanatos, recruitdeath]).getBounds());
         }, 'Zoom To Home').addTo(map);
 
+        
+        
+        L.easyButton('<img class="icon" src="icons/160px-Infobox_info_icon.svg.png">', function(){
+        window.location.href = './html/index.html';
+        }).addTo(map);
+ 
+ 
+
+ 
+        
 
         // ********** button to show/hide data table **********
         var pause = true;
